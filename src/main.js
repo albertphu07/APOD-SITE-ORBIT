@@ -4,85 +4,88 @@ const API_KEY = import.meta.env.VITE_NASA_API_KEY || "DEMO_KEY";
 const $ = (selector) => document.querySelector(selector);
 
 $("#app").innerHTML = `
-  <div class="space-bg"></div>
+  <div class="space-bg" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a class="brand" href="#">
-      <span class="brand-icon">✳</span>
-      ORBIT<span class="muted"> / MISSION CONTROL</span>
+    <a class="brand" href="/" aria-label="Orbit home">
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      <span>Orbit</span>
     </a>
-    <div class="system-status">
-      <span class="live-dot"></span> SYSTEM ONLINE
-    </div>
+    <p class="system-status">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span>NASA archive connected</span>
+    </p>
   </header>
 
   <main class="dashboard">
-    <section class="hero">
-      <div>
-        <p class="eyebrow">PERSONAL SPACE TERMINAL · EARTH</p>
-        <h1>Explore the <span>unknown.</span></h1>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">A small window into a very big universe</p>
+        <h1 id="page-title">Take a moment<br />to <em>look up.</em></h1>
         <p class="subtitle">
-          Your window into the universe. One discovery at a time.
+          One remarkable image from space, every day. No jargon required.
         </p>
       </div>
-      <div class="clock-panel">
-        <span class="eyebrow">LOCAL TIME</span>
-        <div id="clock" class="clock">--:--:--</div>
-        <div id="today" class="muted"></div>
+      <div class="clock-panel" aria-label="Current local time">
+        <span class="eyebrow">Right now</span>
+        <time id="clock" class="clock">--:--:--</time>
+        <span id="today" class="muted"></span>
       </div>
     </section>
 
-    <section class="search-panel">
-      <span class="search-symbol">⌕</span>
+    <section class="search-panel" aria-label="Search">
+      <span class="search-symbol" aria-hidden="true">⌕</span>
       <form id="search-form">
-        <input id="search" placeholder="Search the universe..." 
-          aria-label="Search the web" autocomplete="off" />
-        <button type="submit">SEARCH ↗</button>
+        <label class="sr-only" for="search">Search NASA and space topics</label>
+        <input id="search" placeholder="Search NASA and space topics" autocomplete="off" />
+        <button type="submit">Search the web <span aria-hidden="true">↗</span></button>
       </form>
     </section>
 
     <div class="section-heading">
       <div>
-        <p class="eyebrow">01 / DAILY INTELLIGENCE</p>
-        <h2>Today in the cosmos</h2>
+        <p class="eyebrow">Today’s feature</p>
+        <h2>Somewhere out there</h2>
       </div>
-      <button id="refresh" class="ghost-button">↻ REFRESH</button>
+      <button id="refresh" class="ghost-button" type="button">
+        <span aria-hidden="true">↻</span> Another look
+      </button>
     </div>
 
-    <section id="apod" class="apod-card">
-      <div class="loading"><span class="spinner"></span>
-        Establishing connection with NASA...
+    <section id="apod" class="apod-card" aria-live="polite">
+      <div class="loading" role="status"><span class="spinner"></span>
+        Finding today’s picture...
       </div>
     </section>
 
-    <section class="lower-grid">
+    <section class="lower-grid" aria-label="More ways to explore">
       <article class="panel">
-        <p class="eyebrow">02 / TIME MACHINE</p>
-        <h3>Explore another day</h3>
-        <p class="muted">Travel through NASA's daily astronomy archive.</p>
-        <label for="apod-date">Select a date</label>
+        <p class="eyebrow">The archive</p>
+        <h3>Visit another day</h3>
+        <p class="muted">NASA has been sharing a picture of the cosmos since 1995.</p>
+        <label for="apod-date">Choose a date</label>
         <div class="date-row">
           <input id="apod-date" type="date" />
-          <button id="date-go">EXPLORE ↗</button>
+          <button id="date-go" type="button">View picture <span aria-hidden="true">↗</span></button>
         </div>
       </article>
 
       <article class="panel focus-panel">
-        <p class="eyebrow">03 / DEEP WORK</p>
-        <h3>Mission focus</h3>
-        <p class="muted">One task. No distractions.</p>
-        <div id="timer" class="timer">25:00</div>
+        <p class="eyebrow">A little space</p>
+        <h3>Focus for 25 minutes</h3>
+        <p class="muted">Put the phone down. Give one thing your full attention.</p>
+        <div id="timer" class="timer" role="timer" aria-label="25 minutes remaining">25:00</div>
         <div class="timer-actions">
-          <button id="timer-toggle">START MISSION</button>
-          <button id="timer-reset" class="ghost-button">RESET</button>
+          <button id="timer-toggle" type="button">Start timer</button>
+          <button id="timer-reset" class="ghost-button" type="button">Reset</button>
         </div>
-        <p id="timer-status" class="tiny muted">READY FOR LAUNCH</p>
+        <p id="timer-status" class="tiny muted" aria-live="polite">Ready when you are</p>
       </article>
     </section>
 
     <footer>
-      <span>ORBIT // EXPLORATION NEVER ENDS</span>
-      <span>DATA: NASA APOD API · BUILT ON EARTH</span>
+      <span>Made for curious people</span>
+      <span>Images and data from NASA’s APOD API</span>
     </footer>
   </main>
 `;
@@ -92,16 +95,14 @@ const dateInput = $("#apod-date");
 
 dateInput.max = [
   today.getFullYear(),
-  String(today.getMonth() + 1).padStart(2,0),
+  String(today.getMonth() + 1).padStart(2, "0"),
   String(today.getDate()).padStart(2, "0")
 ].join("-");
 
 function updateClock() {
   const now = new Date();
-  $("#clock").textContent = now.toLocaleTimeString("en-US", {
-    hour12: false
-  });
-  $("#today").textContent = now.toLocaleDateString("en-US", {
+  $("#clock").textContent = now.toLocaleTimeString([], { hour12: false });
+  $("#today").textContent = now.toLocaleDateString([], {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -111,7 +112,6 @@ function updateClock() {
 
 updateClock();
 setInterval(updateClock, 1000);
-
 
 function escapeHTML(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -123,30 +123,42 @@ function escapeHTML(value = "") {
   })[char]);
 }
 
+function getYouTubeId(url) {
+  try {
+    const videoURL = new URL(url);
+    if (videoURL.hostname.endsWith("youtu.be")) {
+      return videoURL.pathname.slice(1);
+    }
+    if (videoURL.pathname === "/watch") {
+      return videoURL.searchParams.get("v") || "";
+    }
+    if (videoURL.pathname.startsWith("/embed/")) {
+      return videoURL.pathname.split("/")[2] || "";
+    }
+  } catch {
+    return "";
+  }
+  return "";
+}
+
 async function loadAPOD(date = "") {
   const card = $("#apod");
-
+  $("#refresh").disabled = true;
   card.innerHTML = `
-    <div class="loading">
+    <div class="loading" role="status">
       <span class="spinner"></span>
-      Receiving transmission...
+      Finding a picture worth looking at...
     </div>`;
 
   try {
-    const params = new URLSearchParams({
-      api_key: API_KEY
-    });
-
+    const params = new URLSearchParams({ api_key: API_KEY });
     if (date) params.set("date", date);
 
-    const response = await fetch(
-      `https://api.nasa.gov/planetary/apod?${params}`
-    );
-
+    const response = await fetch(`https://api.nasa.gov/planetary/apod?${params}`);
     if (!response.ok) {
       throw new Error(
         response.status === 429
-          ? "NASA's request limit was reached. Try again later."
+          ? "NASA’s request limit was reached. Try again in a little while."
           : `NASA returned HTTP ${response.status}.`
       );
     }
@@ -156,107 +168,80 @@ async function loadAPOD(date = "") {
     const explanation = escapeHTML(data.explanation);
     const copyright = escapeHTML(data.copyright || "NASA / Public Domain");
     const safeDate = escapeHTML(data.date);
-
     let media = "";
 
     if (data.media_type === "image") {
+      const imageURL = escapeHTML(data.url);
+      const highResURL = escapeHTML(data.hdurl || data.url);
       media = `
-        <a href="${escapeHTML(data.hdurl || data.url)}"
-           target="_blank" rel="noopener noreferrer">
-          <img class="apod-image"
-               src="${escapeHTML(data.url)}"
-               alt="${title}"
-               loading="lazy" />
+        <a href="${highResURL}" target="_blank" rel="noopener noreferrer">
+          <img class="apod-image" src="${imageURL}" alt="${title}" loading="lazy" />
         </a>`;
-    } else if (
-      data.media_type === "video" &&
-      /youtube\.com|youtu\.be/.test(data.url)
-    ) {
-
-      const videoURL = new URL(data.url);
-      let videoID = "";
-
-      if (videoURL.hostname.endsWith("youtu.be")) {
-        videoID = videoURL.pathname.slice(1);
-      } else if (videoURL.pathname === "/watch") {
-        videoID = videoURL.searchParams.get("v") || "";
-      } else if (videoURL.pathname.startsWith("/embed/")) {
-        videoID = videoURL.pathname.split("/")[2] || "";
-      }
-
+    } else if (data.media_type === "video") {
+      const videoID = getYouTubeId(data.url);
       media = /^[\w-]{11}$/.test(videoID)
         ? `<iframe class="apod-video"
              src="https://www.youtube-nocookie.com/embed/${videoID}"
-             title="${title}" loading="lazy"
-             allowfullscreen></iframe>`
-        : `<p class="media-note">Video link available from NASA.</p>`;
-    } else if (data.media_type === "video") {
-      media = `
-        <video class="apod-video" src="${escapeHTML(data.url)}"
-          controls playsinline>
-          Your browser does not support embedded video.
-        </video>`;
+             title="${title}" loading="lazy" allowfullscreen></iframe>`
+        : `<video class="apod-video" src="${escapeHTML(data.url)}" controls playsinline>
+             Your browser does not support embedded video.
+           </video>`;
     } else {
-      media = `<p class="media-note">No preview available for this item.</p>`;
+      media = `<p class="media-note">No preview is available for this item.</p>`;
     }
 
     card.innerHTML = `
       <div class="apod-media">${media}</div>
       <div class="apod-info">
         <div class="apod-meta">
-          <span class="tag">✦ NASA FEATURE</span>
+          <span class="tag">NASA APOD</span>
           <span class="muted">${safeDate}</span>
         </div>
         <h3>${title}</h3>
         <p class="explanation">${explanation}</p>
-        <div class="apod-credit">IMAGE CREDIT: ${copyright}</div>
+        <div class="apod-credit">Image credit: ${copyright}</div>
       </div>`;
   } catch (error) {
     card.innerHTML = `
       <div class="error-panel">
-        <p class="eyebrow">SIGNAL INTERRUPTED</p>
-        <h3>We lost contact with NASA.</h3>
+        <p class="eyebrow">A small interruption</p>
+        <h3>We couldn’t reach NASA right now.</h3>
         <p>${escapeHTML(error.message)}</p>
-        <button id="retry">RETRY CONNECTION ↻</button>
+        <button id="retry" type="button">Try again <span aria-hidden="true">↻</span></button>
       </div>`;
-
     $("#retry").addEventListener("click", () => loadAPOD(date));
+  } finally {
+    $("#refresh").disabled = false;
   }
 }
 
-$("#refresh").addEventListener("click", () => {
-  loadAPOD(dateInput.value);
-});
+$("#refresh").addEventListener("click", () => loadAPOD(dateInput.value));
 
 $("#date-go").addEventListener("click", () => {
   const date = dateInput.value;
-
   if (!date) {
     dateInput.focus();
     return;
   }
-
   if (date > dateInput.max) {
-    alert("Choose today or an earlier date.");
+    dateInput.setCustomValidity("Choose today or an earlier date.");
+    dateInput.reportValidity();
+    dateInput.setCustomValidity("");
     return;
   }
-
   loadAPOD(date);
 });
 
 $("#search-form").addEventListener("submit", (event) => {
   event.preventDefault();
-
   const query = $("#search").value.trim();
   if (!query) return;
-
   window.open(
     `https://www.google.com/search?q=${encodeURIComponent(query + " NASA")}`,
     "_blank",
     "noopener,noreferrer"
   );
 });
-
 
 let seconds = 25 * 60;
 let running = false;
@@ -265,36 +250,35 @@ let interval = null;
 function drawTimer() {
   const minutes = Math.floor(seconds / 60);
   const remainder = seconds % 60;
-
-  $("#timer").textContent =
-    `${String(minutes).padStart(2, "0")}:` +
-    `${String(remainder).padStart(2, "0")}`;
+  $("#timer").textContent = `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+  $("#timer").setAttribute(
+    "aria-label",
+    `${minutes} minute${minutes === 1 ? "" : "s"} ${remainder} seconds remaining`
+  );
 }
 
 $("#timer-toggle").addEventListener("click", () => {
   if (running) {
     clearInterval(interval);
     running = false;
-    $("#timer-toggle").textContent = "RESUME MISSION";
-    $("#timer-status").textContent = "MISSION PAUSED";
+    $("#timer-toggle").textContent = "Resume timer";
+    $("#timer-status").textContent = "Paused";
     return;
   }
 
   if (seconds === 0) seconds = 25 * 60;
-
   running = true;
-  $("#timer-toggle").textContent = "PAUSE MISSION";
-  $("#timer-status").textContent = "MISSION IN PROGRESS";
+  $("#timer-toggle").textContent = "Pause timer";
+  $("#timer-status").textContent = "In progress";
 
   interval = setInterval(() => {
     seconds--;
     drawTimer();
-
     if (seconds <= 0) {
       clearInterval(interval);
       running = false;
-      $("#timer-toggle").textContent = "START AGAIN";
-      $("#timer-status").textContent = "MISSION COMPLETE";
+      $("#timer-toggle").textContent = "Start again";
+      $("#timer-status").textContent = "Finished — nice work";
     }
   }, 1000);
 });
@@ -304,9 +288,8 @@ $("#timer-reset").addEventListener("click", () => {
   running = false;
   seconds = 25 * 60;
   drawTimer();
-  $("#timer-toggle").textContent = "START MISSION";
-  $("#timer-status").textContent = "READY FOR LAUNCH";
+  $("#timer-toggle").textContent = "Start timer";
+  $("#timer-status").textContent = "Ready when you are";
 });
 
 loadAPOD();
-
