@@ -1,3 +1,5 @@
+NOTE TO REVIWERS: I Understand Why one would claim that I am using over 30% of AI code based on how the website looks like, I want to give y'all some background info on how I used AI and how I made this site. I started off with human code for the CSS HTML and JS I kept using Human code for the HTML and JS But let AI decide on the CSS due to low knowlage on how to make a cool graphic and stuff. I also used copilot to review my code to let me know chnages I could make and what is the best paritice for code. I hope the person reading this understands that I did not use over 30% to code my project of AI and I used it as a tool to help me learn the best paritces and give me ideas on how to create the website from the design to the code There is still a human behind it programming it just that the human used AI to enhance the code to make it more professional by asking it what the best paritice for the format and coming up with ideas for new UI designs to help make the site better and to help me improve.
+
 # Orbit — NASA APOD
 
 Orbit is a space-themed web experience built around NASA's Astronomy Picture of the Day (APOD).
